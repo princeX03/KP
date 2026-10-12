@@ -1,0 +1,131 @@
+PRACTICAL 2: BEANFACTORY AND XML CONFIGURATION
+
+Question:
+Configure Spring beans using an XML configuration file, define dependencies, and inject one bean into another.
+
+PROJECT SETUP
+1. Open IntelliJ IDEA.
+2. Select File > New > Project.
+3. Choose Java.
+4. Select JDK 17.
+5. Select Maven as the build system.
+6. Name the project Practical2 and click Create.
+7. Replace pom.xml with the code below and save.
+8. Load Maven Project when prompted. If no prompt appears, open the Maven tool window and click Reload All Maven Projects.
+9. Wait for Spring dependencies to download.
+
+==================================================
+FILE 1: pom.xml
+Location: Practical2/pom.xml
+==================================================
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>Practical2</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.2.8</version>
+        </dependency>
+    </dependencies>
+</project>
+
+
+==================================================
+FILE 2: EmailService.java
+Location: src/main/java/com/example/EmailService.java
+==================================================
+package com.example;
+
+public class EmailService {
+    public void sendEmail() {
+        System.out.println("Email Sent Successfully.");
+    }
+}
+
+
+==================================================
+FILE 3: CustomerService.java
+Location: src/main/java/com/example/CustomerService.java
+==================================================
+package com.example;
+
+public class CustomerService {
+    private EmailService emailService;
+
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    public void registerCustomer() {
+        System.out.println("Customer Registered Successfully.");
+        emailService.sendEmail();
+    }
+}
+
+
+==================================================
+FILE 4: beans.xml
+Location: src/main/resources/beans.xml
+==================================================
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="emailService" class="com.example.EmailService"/>
+
+    <bean id="customerService" class="com.example.CustomerService">
+        <property name="emailService" ref="emailService"/>
+    </bean>
+
+</beans>
+
+
+==================================================
+FILE 5: Main.java
+Location: src/main/java/com/example/Main.java
+==================================================
+package com.example;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class Main {
+    public static void main(String[] args) {
+        try (ClassPathXmlApplicationContext context =
+                     new ClassPathXmlApplicationContext("beans.xml")) {
+
+            CustomerService customer =
+                    context.getBean("customerService", CustomerService.class);
+
+            customer.registerCustomer();
+        }
+    }
+}
+
+
+==================================================
+HOW TO RUN THE PRACTICAL
+==================================================
+1. Open Main.java.
+2. Click the green Run triangle beside main().
+3. Select Run 'Main.main()'.
+4. Check the Run console.
+
+EXPECTED OUTPUT
+Customer Registered Successfully.
+Email Sent Successfully.
+
+Process finished with exit code 0

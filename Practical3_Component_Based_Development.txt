@@ -1,0 +1,158 @@
+PRACTICAL 3: COMPONENT-BASED APPLICATION DEVELOPMENT
+
+Question:
+Create a Spring application using annotation-based component scanning and dependency injection.
+
+IMPORTANT:
+This TXT file contains the code that was executed successfully in IntelliJ, including the Student ID in the output.
+
+==================================================
+PROJECT SETUP
+==================================================
+1. Open IntelliJ IDEA.
+2. Select File > New > Project.
+3. Choose Java.
+4. Select JDK 17.
+5. Select Maven as the build system.
+6. Name the project Practical3 and click Create.
+7. Replace pom.xml with the code below and save.
+8. Click Load Maven Project if prompted. If no prompt appears, open the Maven tool window and click Reload All Maven Projects.
+9. Wait for the Spring dependency to download.
+
+==================================================
+FILE 1: pom.xml
+Location: Practical3/pom.xml
+==================================================
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>Practical3</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.2.8</version>
+        </dependency>
+    </dependencies>
+</project>
+
+
+==================================================
+FILE 2: StudentService.java
+Location: src/main/java/org/example/service/StudentService.java
+==================================================
+package org.example.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class StudentService {
+
+    public String getStudentDetails() {
+        return "Student ID: 101, Student Name: Rahul, Course: MCA, Semester: 3";
+    }
+}
+
+
+==================================================
+FILE 3: StudentController.java
+Location: src/main/java/org/example/controller/StudentController.java
+==================================================
+package org.example.controller;
+
+import org.example.service.StudentService;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class StudentController {
+
+    private final StudentService studentService;
+
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
+
+    public void displayStudent() {
+        System.out.println(studentService.getStudentDetails());
+    }
+}
+
+
+==================================================
+FILE 4: AppConfig.java
+Location: src/main/java/org/example/config/AppConfig.java
+==================================================
+package org.example.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan("org.example")
+public class AppConfig {
+}
+
+
+==================================================
+FILE 5: Main.java
+Location: src/main/java/org/example/Main.java
+==================================================
+package org.example;
+
+import org.example.config.AppConfig;
+import org.example.controller.StudentController;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class Main {
+
+    public static void main(String[] args) {
+        try (AnnotationConfigApplicationContext context =
+                     new AnnotationConfigApplicationContext(AppConfig.class)) {
+
+            StudentController controller =
+                    context.getBean(StudentController.class);
+
+            controller.displayStudent();
+        }
+    }
+}
+
+
+==================================================
+HOW TO CREATE THE PACKAGES AND FILES
+==================================================
+1. Under src/main/java, create the package org.example if it does not already exist.
+2. Under org.example, create three packages:
+   - config
+   - service
+   - controller
+3. Create Main.java directly inside org.example.
+4. Create AppConfig.java inside config.
+5. Create StudentService.java inside service.
+6. Create StudentController.java inside controller.
+7. Ensure each file is in the location listed above and its package declaration matches the folder.
+
+==================================================
+HOW TO RUN THE PRACTICAL
+==================================================
+1. Open Main.java.
+2. Click the green Run triangle beside main().
+3. Select Run 'Main.main()'.
+4. Check the Run console.
+
+EXPECTED OUTPUT
+Student ID: 101, Student Name: Rahul, Course: MCA, Semester: 3
+
+Process finished with exit code 0
+

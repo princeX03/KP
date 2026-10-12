@@ -1,0 +1,114 @@
+PRACTICAL 1: DEPENDENCY INJECTION AND INVERSION OF CONTROL
+Question: Create Spring beans and wire them together using annotations.
+
+PROJECT SETUP
+1. Open IntelliJ IDEA.
+2. Select File > New > Project.
+3. Choose Java.
+4. Select JDK 17.
+5. Select Maven as the build system.
+6. Name the project Practical1 and click Create.
+7. Replace the contents of pom.xml with the code below.
+8. Click Load Maven Project if prompted, or open the Maven tool window and click Reload All Maven Projects.
+9. Wait for Spring dependencies to download.
+
+========================
+FILE 1: pom.xml
+Location: Practical1/pom.xml
+========================
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>Practical1</artifactId>
+    <version>1.0</version>
+
+    <properties>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>6.2.8</version>
+        </dependency>
+    </dependencies>
+</project>
+
+
+========================
+FILE 2: Main.java
+Location: src/main/java/com/example/Main.java
+========================
+Create package com.example under src/main/java if it does not already exist.
+Inside that package, create a Java class named Main and replace its contents with:
+
+package com.example;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+
+@Component
+class FirstProjectService {
+
+    public String getMessage() {
+        return "Hello from first-project service";
+    }
+}
+
+@Component
+class FirstProjectController {
+
+    private final FirstProjectService service;
+
+    @Autowired
+    public FirstProjectController(FirstProjectService service) {
+        this.service = service;
+    }
+
+    public void displayMessage() {
+        System.out.println(service.getMessage());
+    }
+}
+
+@Configuration
+@ComponentScan("com.example")
+class AppConfig {
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+        try (var context =
+                     new AnnotationConfigApplicationContext(AppConfig.class)) {
+
+            FirstProjectController controller =
+                    context.getBean(FirstProjectController.class);
+
+            controller.displayMessage();
+        }
+    }
+}
+
+
+========================
+HOW TO RUN
+========================
+1. In the Project panel, open src > main > java > com.example > Main.java.
+2. Click the green Run triangle beside main().
+3. Select Run 'Main.main()'.
+4. Check the Run console.
+
+EXPECTED OUTPUT
+Hello from first-project service
+Process finished with exit code 0
+
+
